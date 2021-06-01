@@ -1,0 +1,3 @@
+UML Class Diagram: https://lucid.app/lucidchart/cf242a27-3112-4ecb-975c-0c7401ad1c3f/edit?invitationId=inv_313be198-194a-47df-b872-b525d9d407b6
+Use Case Diagram: https://lucid.app/lucidchart/220e47d5-1b83-4271-9077-0de8d2bd3eb3/edit?invitationId=inv_9209a421-5d8f-46ed-a809-b874195eb01c
+Activity Diagram: https://lucid.app/lucidchart/cd7c089d-6bfb-425b-8c90-082c2c9a0524/edit?invitationId=inv_39235667-0035-4e62-816e-9e559c1d4778
