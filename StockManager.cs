@@ -6,10 +6,10 @@ namespace SDAM2
 {
     class StockManager
     {
-        List<Stock> StockList { get; } = new List<Stock>();
+        public List<Stock> StockList { get; } = new List<Stock>();
         public StockManager()
         {
-            
+
         }
     }
 }

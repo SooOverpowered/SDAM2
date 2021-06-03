@@ -5,7 +5,7 @@ namespace SDAM2
 {
     class BankManager
     {
-        List<Bank> BankList { get; } = new List<Bank>();
+        public List<Bank> BankList { get; } = new List<Bank>();
         public BankManager()
         { }
     }

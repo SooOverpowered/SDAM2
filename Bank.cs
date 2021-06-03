@@ -4,8 +4,8 @@ namespace SDAM2
 {
     class Bank
     {
-        String name { get; set; }
-        StockManager stockManager = new StockManager();
+        public String name { get; set; }
+        public StockManager stockManager = new StockManager();
         public Bank(String name)
         {
             this.name = name;

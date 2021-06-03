@@ -3,7 +3,8 @@ namespace SDAM2
 {
     class Exchange
     {
-        StockManager stockManager { get; set; } = new StockManager();
+        public StockManager stockManager {get;} = new StockManager();
+        public BankManager bankManager {get;} = new BankManager();
         public Exchange()
         {
 
