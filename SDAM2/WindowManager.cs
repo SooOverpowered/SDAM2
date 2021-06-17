@@ -25,19 +25,16 @@ namespace SDAM2
             }
 
             // TEST DATA
-            Stock stock1 = new Stock("AAPL", 15.25m, 10000);
-            Stock stock2 = new Stock("AAPL", 14.00m, 10000);
-            Stock stock3 = new Stock("BAPL", 13.25m, 10000);
-            exchange.stockManager.addStock(stock1);
-            exchange.stockManager.addStock(stock2);
-            exchange.stockManager.addStock(stock3);
+            exchange.stockManager.addStock("AAPL", 15.25m, 10000);
+            exchange.stockManager.addStock("AAPL", 14.00m, 10000);
+            exchange.stockManager.addStock("BAPL", 13.25m, 10000);
             //
 
 
             //  Login check
-            Login(exchange);
+            Bank user = Login(exchange);
             // Main Menu
-            MainMenu(exchange);
+            MainMenu(exchange, user);
 
         }
         static void SaveData(Exchange exchange)
@@ -45,7 +42,7 @@ namespace SDAM2
             string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
             File.WriteAllText("jsonsaved.json", jsonstring);
         }
-        static void Login(Exchange exchange) //Login
+        static Bank Login(Exchange exchange) //Login
         {
             // Ask for bank name repeatedly until a correct name is provided
             while (true)
@@ -58,12 +55,12 @@ namespace SDAM2
                 {
                     SignUp(exchange);
                 }
-                else if ((from bank in exchange.bankManager.BankList where bank.name == bankName select bank).Count() == 1) // Bank name exist
+                else if (exchange.bankManager.getBank(bankName).Count() == 1) // Bank name exist
                 {
                     Console.WriteLine("Authenticated");
                     Console.WriteLine("\nPress any key to continue...");
                     Console.ReadKey();
-                    break;//Exit loop
+                    return exchange.bankManager.getBank(bankName).First();//Exit loop
                 }
                 else
                 {
@@ -88,7 +85,7 @@ namespace SDAM2
                     Console.WriteLine("\nPress any key to continue...");
                     Console.ReadKey();
                 }
-                else if ((from bank in exchange.bankManager.BankList where bank.name == bankName select bank).Count() == 1) // Bank name exist
+                else if (exchange.bankManager.getBank(bankName).Count() == 1) // Bank name exist
                 {
                     Console.WriteLine("Bank already exist, please try another name");
                     Console.WriteLine("\nPress any key to continue...");
@@ -105,7 +102,7 @@ namespace SDAM2
                 }
             }
         }
-        static void MainMenu(Exchange exchange)
+        static void MainMenu(Exchange exchange, Bank user)
         {
             const String EXIT = "0";
             const String BUY = "1";
@@ -125,7 +122,7 @@ namespace SDAM2
                 switch (choice)
                 {
                     case BUY:
-                        StockExchangeMenu(exchange);
+                        StockExchangeMenu(exchange, user);
                         break;
                     case EXIT:
                         string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
@@ -140,7 +137,7 @@ namespace SDAM2
                 }
             }
         }
-        static void StockExchangeMenu(Exchange exchange)
+        static void StockExchangeMenu(Exchange exchange, Bank user)
         {
             const String EXIT = "0";
             bool flag = true;
@@ -168,7 +165,7 @@ namespace SDAM2
                     default:
                         if (stockcodes.Contains(choice))
                         {
-                            ExchangeMenu(exchange, choice);
+                            ExchangeMenu(exchange, user, choice);
                         }
                         else
                         {
@@ -180,9 +177,10 @@ namespace SDAM2
                 }
             }
         }
-        static void ExchangeMenu(Exchange exchange, String stockCode)
+        static void ExchangeMenu(Exchange exchange, Bank user, String stockCode)
         {
-            const int EXIT = 0;
+            const String EXIT = "0";
+            const String BUY = "1";
             bool flag = true;
             while (flag)
             {
@@ -195,18 +193,57 @@ namespace SDAM2
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "Name", "Price", "Volume");
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "----", "-----", "------");
                 List<Stock> stocks = exchange.stockManager.getStock(stockCode);
-                foreach (Stock s in stocks.GetRange(0, 10))
+                int count = 0;
+                foreach (Stock s in stocks)
                 {
-                    Console.WriteLine("{0, -8}{1,8:C2}{2,12}", s.stockCode, s.price, s.volume);
+                    Console.WriteLine("{0,-8}{1,8:C2}{2,12}", s.stockCode, s.price, s.volume);
+                    count += 1;
+                    if (count == 10)
+                    {
+                        break;
+                    }
                 }
-                Console.Write("\nPlease choose a stock code: ");
-                int choice = Convert.ToInt16(Console.ReadLine());
+                Console.Write("\nPlease choose an option: ");
+                String choice = Console.ReadLine();
                 switch (choice)
                 {
                     case EXIT:
                         flag = false;
                         break;
+                    case BUY:
+                        Console.Write("Please enter price: ");
+                        decimal user_price = Convert.ToDecimal(Console.ReadLine());
+                        Console.Write("Please enter volume: ");
+                        int user_vol = Convert.ToInt16(Console.ReadLine());
+                        List<decimal> prices = new List<decimal>(from stock in stocks select stock.price);
+                        if (prices.Contains(user_price))
+                        {
+                            int avail_stock = (from stock in stocks where stock.price == user_price select stock.volume).Sum();
+                            if (avail_stock >= user_vol) //Banks buy successful
+                            {
+                                user.stockManager.addStock(stockCode, user_price, user_vol);
+                                Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
+                                Console.WriteLine("\nPress any key to continue...");
+                                Console.ReadKey();
+                                SaveData(exchange);
+                            }
+                            else
+                            {
+                                //Send a quote
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No {stockCode} stock available at {user_price}");
+                            Console.WriteLine($"The best price for {stockCode} is {stocks.First().price}");
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                        }
+                        break;
                     default:
+                        Console.WriteLine("Please choose from the listed options");
+                        Console.WriteLine("\nPress any key to continue...");
+                        Console.ReadKey();
                         break;
                 }
             }

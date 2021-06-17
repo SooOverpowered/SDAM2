@@ -1,4 +1,3 @@
-using System.Security.Principal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +14,9 @@ namespace SDAM2
             Bank bank = new Bank(Name);
             BankList.Add(bank);
         }
-        public Bank getBank(string Name)
+        public List<Bank> getBank(string Name)
         {
-            return (from bank in BankList where bank.name == Name select bank).First();
+            return new List<Bank>(from bank in BankList where bank.name == Name select bank);
 
         }
     }
