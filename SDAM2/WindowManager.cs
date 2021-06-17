@@ -237,7 +237,7 @@ namespace SDAM2
                                     List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
                                     if (quoted.Count() == 0)
                                     {
-                                        Console.WriteLine("No stock available at that price and volume");
+                                        Console.WriteLine("No stock available at that volume");
                                     }
                                     else
                                     {
@@ -248,7 +248,7 @@ namespace SDAM2
                             else
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
                             }
                             Console.WriteLine("\nPress any key to continue...");
                             Console.ReadKey();
@@ -261,7 +261,7 @@ namespace SDAM2
                             if (exchange.stockManager.getStock(stockCode, user_price).Count() == 0)
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
                             }
                             else
                             {
