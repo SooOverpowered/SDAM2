@@ -179,6 +179,7 @@ namespace SDAM2
         {
             const String EXIT = "0";
             const String BUY = "1";
+            const String QUOTE = "2";
             bool flag = true;
             while (flag)
             {
@@ -206,56 +207,78 @@ namespace SDAM2
                 switch (choice)
                 {
                     case EXIT:
-                        flag = false;
-                        break;
-                    case BUY:
-                        Console.Write("Please enter price: ");
-                        decimal user_price = Convert.ToDecimal(Console.ReadLine());
-                        Console.Write("Please enter volume: ");
-                        int user_vol = Convert.ToInt32(Console.ReadLine());
-                        List<decimal> prices = new List<decimal>(from stock in stocks select stock.price);
-                        if (prices.Contains(user_price))
                         {
-                            int avail_stock = (from stock in stocks where stock.price == user_price select stock.volume).First();
-                            if (user_vol == 0)
+                            flag = false;
+                            break;
+                        }
+                    case BUY:
+                        {
+                            Console.Write("Please enter price: ");
+                            decimal user_price = Convert.ToDecimal(Console.ReadLine());
+                            Console.Write("Please enter volume: ");
+                            int user_vol = Convert.ToInt32(Console.ReadLine());
+                            if (exchange.stockManager.getStock(stockCode, user_price).Count() == 1)
+                            {
+                                Stock avail_stock = exchange.stockManager.getStock(stockCode, user_price).First();
+                                if (user_vol == 0)
+                                {
+                                    Console.WriteLine($"Quote {avail_stock.volume} {avail_stock.stockCode} at ${avail_stock.price}");
+                                }
+                                else if (avail_stock.volume >= user_vol) //Banks buy successful
+                                {
+                                    user.stockManager.addStock(stockCode, user_price, user_vol);
+                                    Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
+                                    SaveData(exchange);
+                                }
+                                else
+                                {
+                                    //Send a quote
+                                    Console.WriteLine($"Only {avail_stock.volume} {stockCode} available at ${user_price}");
+                                    List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
+                                    if (quoted.Count() == 0)
+                                    {
+                                        Console.WriteLine("No stock available at that price and volume");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"Quote {quoted.First().volume} {quoted.First().stockCode} at ${quoted.First().price}");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine($"No {stockCode} stock available at {user_price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
+                            }
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                            break;
+                        }
+                    case QUOTE:
+                        {
+                            Console.Write("Please enter price: ");
+                            decimal user_price = Convert.ToDecimal(Console.ReadLine());
+                            if (exchange.stockManager.getStock(stockCode, user_price).Count() == 0)
+                            {
+                                Console.WriteLine($"No {stockCode} stock available at {user_price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
+                            }
+                            else
                             {
                                 Stock quoted = exchange.stockManager.getStock(stockCode, user_price).First();
                                 Console.WriteLine($"Quote {quoted.volume} {quoted.stockCode} at ${quoted.price}");
                             }
-                            else if (avail_stock >= user_vol) //Banks buy successful
-                            {
-                                user.stockManager.addStock(stockCode, user_price, user_vol);
-                                Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
-                                SaveData(exchange);
-                            }
-                            else
-                            {
-                                //Send a quote
-                                Console.WriteLine($"Only {avail_stock} {stockCode} available at ${user_price}");
-                                List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
-                                if (quoted.Count() == 0)
-                                { 
-                                    Console.WriteLine("No stock available at that price and volume");
-                                }
-                                else
-                                {
-                                    Console.WriteLine($"Quote {quoted.First().volume} {quoted.First().stockCode} at ${quoted.First().price}");
-                                }
-                            }
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                            break;
                         }
-                        else
-                        {
-                            Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                            Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
-                        }
-                        Console.WriteLine("\nPress any key to continue...");
-                        Console.ReadKey();
-                        break;
                     default:
-                        Console.WriteLine("Please choose from the listed options");
-                        Console.WriteLine("\nPress any key to continue...");
-                        Console.ReadKey();
-                        break;
+                        {
+                            Console.WriteLine("Please choose from the listed options");
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                            break;
+                        }
                 }
             }
         }
