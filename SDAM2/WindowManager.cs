@@ -123,8 +123,7 @@ namespace SDAM2
                         StockExchangeMenu(exchange, user);
                         break;
                     case EXIT:
-                        string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
-                        File.WriteAllText("jsonsaved.json", jsonstring);
+                        SaveData(exchange);
                         flag = false;
                         break;
                     default:
@@ -158,20 +157,25 @@ namespace SDAM2
                 switch (choice)
                 {
                     case EXIT:
-                        flag = false;
-                        break;
+                        {
+                            SaveData(exchange);
+                            flag = false;
+                            break;
+                        }
                     default:
-                        if (stockcodes.Contains(choice))
                         {
-                            ExchangeMenu(exchange, user, choice);
+                            if (stockcodes.Contains(choice))
+                            {
+                                ExchangeMenu(exchange, user, choice);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Please choose from the listed options");
+                                Console.WriteLine("\nPress any key to continue...");
+                                Console.ReadKey();
+                            }
+                            break;
                         }
-                        else
-                        {
-                            Console.WriteLine("Please choose from the listed options");
-                            Console.WriteLine("\nPress any key to continue...");
-                            Console.ReadKey();
-                        }
-                        break;
                 }
             }
         }
@@ -208,6 +212,7 @@ namespace SDAM2
                 {
                     case EXIT:
                         {
+                            SaveData(exchange);
                             flag = false;
                             break;
                         }
@@ -237,7 +242,7 @@ namespace SDAM2
                                     List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
                                     if (quoted.Count() == 0)
                                     {
-                                        Console.WriteLine("No stock available at that price and volume");
+                                        Console.WriteLine("No stock available at that volume");
                                     }
                                     else
                                     {
@@ -248,7 +253,7 @@ namespace SDAM2
                             else
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
                             }
                             Console.WriteLine("\nPress any key to continue...");
                             Console.ReadKey();
@@ -261,7 +266,7 @@ namespace SDAM2
                             if (exchange.stockManager.getStock(stockCode, user_price).Count() == 0)
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
                             }
                             else
                             {
