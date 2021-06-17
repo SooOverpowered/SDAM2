@@ -123,8 +123,7 @@ namespace SDAM2
                         StockExchangeMenu(exchange, user);
                         break;
                     case EXIT:
-                        string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
-                        File.WriteAllText("jsonsaved.json", jsonstring);
+                        SaveData(exchange);
                         flag = false;
                         break;
                     default:
@@ -158,20 +157,25 @@ namespace SDAM2
                 switch (choice)
                 {
                     case EXIT:
-                        flag = false;
-                        break;
+                        {
+                            SaveData(exchange);
+                            flag = false;
+                            break;
+                        }
                     default:
-                        if (stockcodes.Contains(choice))
                         {
-                            ExchangeMenu(exchange, user, choice);
+                            if (stockcodes.Contains(choice))
+                            {
+                                ExchangeMenu(exchange, user, choice);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Please choose from the listed options");
+                                Console.WriteLine("\nPress any key to continue...");
+                                Console.ReadKey();
+                            }
+                            break;
                         }
-                        else
-                        {
-                            Console.WriteLine("Please choose from the listed options");
-                            Console.WriteLine("\nPress any key to continue...");
-                            Console.ReadKey();
-                        }
-                        break;
                 }
             }
         }
@@ -208,6 +212,7 @@ namespace SDAM2
                 {
                     case EXIT:
                         {
+                            SaveData(exchange);
                             flag = false;
                             break;
                         }
