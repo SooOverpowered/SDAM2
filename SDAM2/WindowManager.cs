@@ -107,8 +107,8 @@ namespace SDAM2
         }
         static void MainMenu(Exchange exchange)
         {
-            const int EXIT = 0;
-            const int BUY = 1;
+            const String EXIT = "0";
+            const String BUY = "1";
             bool flag = true;
             while (flag)
             {
@@ -121,7 +121,7 @@ namespace SDAM2
                 Console.WriteLine("0. EXIT PROGRAM");
                 Console.WriteLine(new string('-', 29));
                 Console.Write("Please choose an option: ");
-                int choice = Convert.ToInt16(Console.ReadLine());
+                String choice = Console.ReadLine();
                 switch (choice)
                 {
                     case BUY:
@@ -142,40 +142,41 @@ namespace SDAM2
         }
         static void StockExchangeMenu(Exchange exchange)
         {
-            const int EXIT = 0;
+            const String EXIT = "0";
             bool flag = true;
             while (flag)
             {
                 Console.Clear();
                 Console.WriteLine("----------TRADE MENU----------");
-                Console.WriteLine("\n0. BACK\n");
-                Console.WriteLine("----------STOCK CODES---------");
-                int count = 1;
+                Console.WriteLine("\n0. BACK");
+                Console.WriteLine("\n----------STOCK CODES---------");
+                Console.WriteLine("{0,-8}{1,8}", "Name", "Price");
+                Console.WriteLine("{0,-8}{1,8}", "----", "-----");
                 List<String> stockcodes = new List<String>((from stock in exchange.stockManager.StockList orderby stock.stockCode select stock.stockCode).Distinct());
                 foreach (String s in stockcodes)
                 {
-                    Console.WriteLine($"{count}. {s}");
-                    count += 1;
+                    Stock st = exchange.stockManager.getStock(s)[0];
+                    Console.WriteLine("{0, -8}{1,8:C2}", st.stockCode, st.price);
                 }
-                Console.Write("\nPlease choose a stock code: ");
-                int choice = Convert.ToInt16(Console.ReadLine());
-                if (choice < 0 ^ choice > count)
+                Console.Write("\nChoose one of the menu option or enter stock name: ");
+                String choice = Console.ReadLine();
+                switch (choice)
                 {
-                    Console.WriteLine("Please choose from the listed options");
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                }
-                else
-                {
-                    switch (choice)
-                    {
-                        case EXIT:
-                            flag = false;
-                            break;
-                        default:
-                            ExchangeMenu(exchange, stockcodes[choice - 1]);
-                            break;
-                    }
+                    case EXIT:
+                        flag = false;
+                        break;
+                    default:
+                        if (stockcodes.Contains(choice))
+                        {
+                            ExchangeMenu(exchange, choice);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Please choose from the listed options");
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                        }
+                        break;
                 }
             }
         }
@@ -190,10 +191,10 @@ namespace SDAM2
                 Console.WriteLine("\n0. BACK\n");
                 Console.WriteLine("1. BUY");
                 Console.WriteLine("2. QUOTE");
-                Console.WriteLine("----------STOCK LIST----------");
-                List<Stock> stocks = exchange.stockManager.getStock(stockCode);
+                Console.WriteLine("\n----------STOCK LIST----------");
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "Name", "Price", "Volume");
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "----", "-----", "------");
+                List<Stock> stocks = exchange.stockManager.getStock(stockCode);
                 foreach (Stock s in stocks.GetRange(0, 10))
                 {
                     Console.WriteLine("{0, -8}{1,8:C2}{2,12}", s.stockCode, s.price, s.volume);
