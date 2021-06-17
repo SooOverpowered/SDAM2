@@ -35,5 +35,9 @@ namespace SDAM2
         {
             return new List<Stock>(from s in StockList where s.stockCode == stockcode & s.price == price orderby s.price select s);
         }
+        public List<Stock> getStockFromVolume(String stockcode, int volume)
+        {
+            return new List<Stock>(from s in StockList where s.stockCode == stockcode & s.volume >= volume orderby s.price select s);
+        }
     }
 }
