@@ -77,13 +77,11 @@ namespace SDAM2
             {
                 Console.Clear();
                 Console.WriteLine("-----------Sign Up------------");
-                Console.Write("Please enter your bank name : ");
+                Console.Write("Please enter your bank name (Leave blank to go back to login screen): ");
                 String bankName = Console.ReadLine();
                 if (bankName == "") // Bank name empty
                 {
-                    Console.WriteLine("Bank name cannot be empty");
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
+                    break;
                 }
                 else if (exchange.bankManager.getBank(bankName).Count() == 1) // Bank name exist
                 {
@@ -214,31 +212,44 @@ namespace SDAM2
                         Console.Write("Please enter price: ");
                         decimal user_price = Convert.ToDecimal(Console.ReadLine());
                         Console.Write("Please enter volume: ");
-                        int user_vol = Convert.ToInt16(Console.ReadLine());
+                        int user_vol = Convert.ToInt32(Console.ReadLine());
                         List<decimal> prices = new List<decimal>(from stock in stocks select stock.price);
                         if (prices.Contains(user_price))
                         {
-                            int avail_stock = (from stock in stocks where stock.price == user_price select stock.volume).Sum();
-                            if (avail_stock >= user_vol) //Banks buy successful
+                            int avail_stock = (from stock in stocks where stock.price == user_price select stock.volume).First();
+                            if (user_vol == 0)
+                            {
+                                Stock quoted = exchange.stockManager.getStock(stockCode, user_price).First();
+                                Console.WriteLine($"Quote {quoted.volume} {quoted.stockCode} at ${quoted.price}");
+                            }
+                            else if (avail_stock >= user_vol) //Banks buy successful
                             {
                                 user.stockManager.addStock(stockCode, user_price, user_vol);
                                 Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
-                                Console.WriteLine("\nPress any key to continue...");
-                                Console.ReadKey();
                                 SaveData(exchange);
                             }
                             else
                             {
                                 //Send a quote
+                                Console.WriteLine($"Only {avail_stock} {stockCode} available at ${user_price}");
+                                List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
+                                if (quoted.Count() == 0)
+                                { 
+                                    Console.WriteLine("No stock available at that price and volume");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Quote {quoted.First().volume} {quoted.First().stockCode} at ${quoted.First().price}");
+                                }
                             }
                         }
                         else
                         {
                             Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                            Console.WriteLine($"The best price for {stockCode} is {stocks.First().price}");
-                            Console.WriteLine("\nPress any key to continue...");
-                            Console.ReadKey();
+                            Console.WriteLine($"Quote {stocks.First().volume} {stockCode} is {stocks.First().price}");
                         }
+                        Console.WriteLine("\nPress any key to continue...");
+                        Console.ReadKey();
                         break;
                     default:
                         Console.WriteLine("Please choose from the listed options");
