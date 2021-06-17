@@ -10,6 +10,7 @@ namespace SDAM2
     {
         static void Main()
         {
+            Console.SetWindowSize(100,50);
             InitializeProgram();
         }
         static void InitializeProgram()
@@ -150,7 +151,7 @@ namespace SDAM2
             {
                 Console.Clear();
                 Console.WriteLine("----------TRADE MENU----------");
-                Console.WriteLine("\n0. EXIT TRADE MENU\n");
+                Console.WriteLine("\n0. BACK\n");
                 Console.WriteLine("----------STOCK CODES---------");
                 int count = 1;
                 List<String> stockcodes = new List<String>((from stock in exchange.stockManager.StockList orderby stock.stockCode select stock.stockCode).Distinct());
@@ -159,7 +160,7 @@ namespace SDAM2
                     Console.WriteLine($"{count}. {s}");
                     count += 1;
                 }
-                Console.WriteLine("\nPlease choose a stock code: ");
+                Console.Write("\nPlease choose a stock code: ");
                 int choice = Convert.ToInt16(Console.ReadLine());
                 if (choice < 0 ^ choice > count)
                 {
@@ -189,16 +190,18 @@ namespace SDAM2
             {
                 Console.Clear();
                 Console.WriteLine("----------TRADE MENU----------");
-                Console.WriteLine("\n0. BACK\n");
+                Console.WriteLine("\n0. BACK");
+                Console.WriteLine("\n1. BUY");
+                Console.WriteLine("\n2. QUOTE");
                 Console.WriteLine("----------STOCK LIST----------");
                 List<Stock> stocks = exchange.stockManager.getStock(stockCode);
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "Name", "Price", "Volume");
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "----", "-----", "------");
-                foreach (Stock s in stocks)
+                foreach (Stock s in stocks.GetRange(0,10))
                 {
                     Console.WriteLine("{0, -8}{1,8:C2}{2,12}", s.stockCode, s.price, s.volume);
                 }
-                Console.WriteLine("\nPlease choose a stock code: ");
+                Console.Write("\nPlease choose a stock code: ");
                 int choice = Convert.ToInt16(Console.ReadLine());
                 switch (choice)
                 {
