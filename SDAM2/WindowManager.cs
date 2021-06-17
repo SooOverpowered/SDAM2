@@ -32,9 +32,9 @@ namespace SDAM2
 
 
             //  Login check
-            Login(exchange);
+            Bank user = Login(exchange);
             // Main Menu
-            MainMenu(exchange);
+            MainMenu(exchange, user);
 
         }
         static void SaveData(Exchange exchange)
@@ -42,7 +42,7 @@ namespace SDAM2
             string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
             File.WriteAllText("jsonsaved.json", jsonstring);
         }
-        static void Login(Exchange exchange) //Login
+        static Bank Login(Exchange exchange) //Login
         {
             // Ask for bank name repeatedly until a correct name is provided
             while (true)
@@ -55,12 +55,12 @@ namespace SDAM2
                 {
                     SignUp(exchange);
                 }
-                else if ((from bank in exchange.bankManager.BankList where bank.name == bankName select bank).Count() == 1) // Bank name exist
+                else if (exchange.bankManager.getBank(bankName).Count() == 1) // Bank name exist
                 {
                     Console.WriteLine("Authenticated");
                     Console.WriteLine("\nPress any key to continue...");
                     Console.ReadKey();
-                    break;//Exit loop
+                    return exchange.bankManager.getBank(bankName).First();//Exit loop
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace SDAM2
                     Console.WriteLine("\nPress any key to continue...");
                     Console.ReadKey();
                 }
-                else if ((from bank in exchange.bankManager.BankList where bank.name == bankName select bank).Count() == 1) // Bank name exist
+                else if (exchange.bankManager.getBank(bankName).Count() == 1) // Bank name exist
                 {
                     Console.WriteLine("Bank already exist, please try another name");
                     Console.WriteLine("\nPress any key to continue...");
@@ -102,7 +102,7 @@ namespace SDAM2
                 }
             }
         }
-        static void MainMenu(Exchange exchange)
+        static void MainMenu(Exchange exchange, Bank user)
         {
             const String EXIT = "0";
             const String BUY = "1";
@@ -122,7 +122,7 @@ namespace SDAM2
                 switch (choice)
                 {
                     case BUY:
-                        StockExchangeMenu(exchange);
+                        StockExchangeMenu(exchange, user);
                         break;
                     case EXIT:
                         string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
@@ -137,7 +137,7 @@ namespace SDAM2
                 }
             }
         }
-        static void StockExchangeMenu(Exchange exchange)
+        static void StockExchangeMenu(Exchange exchange, Bank user)
         {
             const String EXIT = "0";
             bool flag = true;
@@ -165,7 +165,7 @@ namespace SDAM2
                     default:
                         if (stockcodes.Contains(choice))
                         {
-                            ExchangeMenu(exchange, choice);
+                            ExchangeMenu(exchange, user, choice);
                         }
                         else
                         {
@@ -177,7 +177,7 @@ namespace SDAM2
                 }
             }
         }
-        static void ExchangeMenu(Exchange exchange, String stockCode)
+        static void ExchangeMenu(Exchange exchange, Bank user, String stockCode)
         {
             const String EXIT = "0";
             const String BUY = "1";
@@ -219,9 +219,13 @@ namespace SDAM2
                         if (prices.Contains(user_price))
                         {
                             int avail_stock = (from stock in stocks where stock.price == user_price select stock.volume).Sum();
-                            if (avail_stock >= user_vol)
+                            if (avail_stock >= user_vol) //Banks buy successful
                             {
-                                //Banks buy successful
+                                user.stockManager.addStock(stockCode, user_price, user_vol);
+                                Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
+                                Console.WriteLine("\nPress any key to continue...");
+                                Console.ReadKey();
+                                SaveData(exchange);
                             }
                             else
                             {
