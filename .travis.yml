@@ -1,0 +1,8 @@
+language: csharp
+solution: SDAM2.sln
+mono: none
+dotnet: 5.0.x
+script:
+  - dotnet restore
+  - dotnet --no-restore build
+  - dotnet --no-build test
