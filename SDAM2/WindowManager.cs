@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace SDAM2
 {
-    public class WindowManager
+    class WindowManager
     {
         public WindowManager()
         { }
@@ -114,7 +114,7 @@ namespace SDAM2
                 Console.WriteLine("3. Transaction Log");
                 Console.WriteLine("4. Financial Report");
                 Console.WriteLine("0. EXIT PROGRAM");
-                Console.WriteLine(new string('-', 29));
+                Console.WriteLine(new string('-', 30));
                 Console.Write("Please choose an option: ");
                 String choice = Console.ReadLine();
                 switch (choice)
@@ -152,6 +152,7 @@ namespace SDAM2
                     Stock st = exchange.stockManager.getStock(s)[0];
                     Console.WriteLine("{0, -8}{1,8:C2}", st.stockCode, st.price);
                 }
+                Console.WriteLine(new string('-', 30));
                 Console.Write("\nChoose one of the menu option or enter stock name: ");
                 String choice = Console.ReadLine();
                 switch (choice)
@@ -206,6 +207,7 @@ namespace SDAM2
                         break;
                     }
                 }
+                Console.WriteLine(new string('-', 30));
                 Console.Write("\nPlease choose an option: ");
                 String choice = Console.ReadLine();
                 switch (choice)
@@ -222,38 +224,44 @@ namespace SDAM2
                             decimal user_price = Convert.ToDecimal(Console.ReadLine());
                             Console.Write("Please enter volume: ");
                             int user_vol = Convert.ToInt32(Console.ReadLine());
-                            if (exchange.stockManager.getStock(stockCode, user_price).Count() == 1)
+                            exchange.logManager.addLog(user.name, "EXCH", "buy", stockCode, user_vol, user_price, DateTime.Now);
+                            if (exchange.stockManager.getStock(stockCode, user_price).Count() == 1) //Stock with user_price exist
                             {
                                 Stock avail_stock = exchange.stockManager.getStock(stockCode, user_price).First();
-                                if (user_vol == 0)
+                                if (user_vol == 0) //Volume 0 means a quote
                                 {
                                     Console.WriteLine($"Quote {avail_stock.volume} {avail_stock.stockCode} at ${avail_stock.price}");
+                                    exchange.logManager.addLog("EXCH", user.name, "quote", avail_stock.stockCode, avail_stock.volume, avail_stock.price, DateTime.Now);
                                 }
                                 else if (avail_stock.volume >= user_vol) //Banks buy successful
                                 {
                                     user.stockManager.addStock(stockCode, user_price, user_vol);
                                     Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
+                                    exchange.logManager.addLog("EXCH", user.name, "bought", stockCode, user_vol, user_price, DateTime.Now);
                                     SaveData(exchange);
                                 }
-                                else
+                                else //not enough stock -> quote stock with enough volume and having best price
                                 {
                                     //Send a quote
                                     Console.WriteLine($"Only {avail_stock.volume} {stockCode} available at ${user_price}");
+                                    exchange.logManager.addLog("EXCH", user.name, "only", stockCode, avail_stock.volume, user_price, DateTime.Now);
                                     List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
-                                    if (quoted.Count() == 0)
+                                    if (quoted.Count() == 0) //not stock with that volume available
                                     {
                                         Console.WriteLine("No stock available at that volume");
                                     }
-                                    else
+                                    else //stock with sufficient volume available
                                     {
                                         Console.WriteLine($"Quote {quoted.First().volume} {quoted.First().stockCode} at ${quoted.First().price}");
+                                        exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, quoted.First().volume, quoted.First().price, DateTime.Now);
                                     }
                                 }
                             }
-                            else
+                            else //Stock with user_price does not exist -> quote another price and volume
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}"); //Quote best price available
+                                exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, stocks.First().volume, stocks.First().price, DateTime.Now);
                             }
                             Console.WriteLine("\nPress any key to continue...");
                             Console.ReadKey();
