@@ -39,7 +39,8 @@ namespace SDAM2
         }
         static void SaveData(Exchange exchange)
         {
-            string jsonstring = JsonSerializer.Serialize<Exchange>(exchange);
+            JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+            string jsonstring = JsonSerializer.Serialize<Exchange>(exchange, options);
             File.WriteAllText("jsonsaved.json", jsonstring);
         }
         static Bank Login(Exchange exchange) //Login
@@ -143,15 +144,18 @@ namespace SDAM2
                         }
                     case LOG:
                         {
+                            DisplayLog(exchange);
                             break;
                         }
                     case REPORT:
                         {
+                            DisplayReport(exchange);
                             break;
                         }
                     case EXIT:
                         {
                             SaveData(exchange);
+                            Console.Clear();
                             flag = false;
                             break;
                         }
@@ -173,8 +177,8 @@ namespace SDAM2
             {
                 Console.Clear();
                 Console.WriteLine("----------TRADE MENU----------");
-                Console.WriteLine("\n0. BACK");
-                Console.WriteLine("\n----------STOCK CODES---------");
+                Console.WriteLine("0. BACK");
+                Console.WriteLine("----------STOCK CODES---------");
                 Console.WriteLine("{0,-8}{1,8}", "Name", "Price");
                 Console.WriteLine("{0,-8}{1,8}", "----", "-----");
                 List<String> stockcodes = new List<String>((from stock in exchange.stockManager.StockList orderby stock.stockCode select stock.stockCode).Distinct());
@@ -221,10 +225,10 @@ namespace SDAM2
             {
                 Console.Clear();
                 Console.WriteLine("----------TRADE MENU----------");
-                Console.WriteLine("\n0. BACK\n");
+                Console.WriteLine("0. BACK\n");
                 Console.WriteLine("1. BUY");
                 Console.WriteLine("2. QUOTE");
-                Console.WriteLine("\n----------STOCK LIST----------");
+                Console.WriteLine("----------STOCK LIST----------");
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "Name", "Price", "Volume");
                 Console.WriteLine("{0,-8}{1,8}{2,12}", "----", "-----", "------");
                 List<Stock> stocks = exchange.stockManager.getStock(stockCode);
@@ -306,11 +310,13 @@ namespace SDAM2
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price}");
                                 Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
+                                exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, stocks.First().volume, stocks.First().price, DateTime.Now);
                             }
                             else
                             {
                                 Stock quoted = exchange.stockManager.getStock(stockCode, user_price).First();
                                 Console.WriteLine($"Quote {quoted.volume} {quoted.stockCode} at ${quoted.price}");
+                                exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, quoted.volume, quoted.price, DateTime.Now);
                             }
                             Console.WriteLine("\nPress any key to continue...");
                             Console.ReadKey();
@@ -330,13 +336,15 @@ namespace SDAM2
         {
             Console.Clear();
             Console.WriteLine("------------ASSETS------------");
+            Console.WriteLine($"Asset of: {user.name}");
+            Console.WriteLine(new string('-', 30));
             List<String> stockcodes = new List<String>((from stock in user.stockManager.StockList orderby stock.stockCode select stock.stockCode).Distinct());
-            Console.WriteLine("{0,-8}{1,12}", "Name", "Volume");
-            Console.WriteLine("{0,-8}{1,12}", "----", "------");
+            Console.WriteLine("{0,-4}{1,9}", "Name", "Volume");
+            Console.WriteLine("{0,-4}{1,9}", "----", "------");
             foreach (String stock in stockcodes)
             {
                 List<Stock> st = user.stockManager.getStock(stock);
-                Console.WriteLine("{0,-8}{1,12}", stock, st.Sum(item => item.volume));
+                Console.WriteLine("{0,-4}{1,9}", stock, st.Sum(item => item.volume));
             }
             Console.WriteLine(new string('-', 30));
             Console.WriteLine("\nPress any key to continue...");
@@ -345,19 +353,56 @@ namespace SDAM2
         static void DisplayInvoice(Exchange exchange, Bank user)
         {
             Console.Clear();
-            Console.WriteLine(new string('-', 20) + "INVOICE" + new string('-', 20));
-            Console.WriteLine("{0,-20}{1,8}{2,8}{3,12}", "Date", "Name", "Price", "Volume");
-            Console.WriteLine("{0,-20}{1,8}{2,8}{3,12}", "----", "----", "-----", "------");
+            Console.WriteLine(new string('-', 26) + "INVOICE" + new string('-', 27));
+            Console.WriteLine($"Invoice for: {user.name}");
+            Console.WriteLine(new string('-', 60));
+            Console.WriteLine("{0,-20}{1,8}{2,8}{3,9}{4,14}", "Date", "Name", "Price", "Volume", "Amount");
+            Console.WriteLine("{0,-20}{1,8}{2,8}{3,9}{4,14}", new string('-', 20), "----", "-----", "------", new string('-', 12));
             List<Log> logs = exchange.logManager.getBankTransactions(user.name);
             Decimal total = 0m;
             foreach (Log log in logs)
             {
                 total += log.price * log.volume;
-                Console.WriteLine("{0,-20}{1,8}{2,8}{3,12}", log.timeStamp, log.stockCode, log.price, log.volume);
+                Console.WriteLine("{0,-20}{1,8}{2,8}{3,9}{4,14:C2}", log.timeStamp, log.stockCode, log.price, log.volume, log.price * log.volume);
             }
             Console.WriteLine("\n{0,-20}{1,-20:C2}", "Total (w/o fee):", total);
             Console.WriteLine("{0,-20}{1,-20:C2}", "Total (w/ fee):", total * 1.05m);
             Console.WriteLine(new string('-', 60));
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+        static void DisplayLog(Exchange exchange)
+        {
+            Console.Clear();
+            Console.WriteLine(new string('-', 35) + "LOG" + new string('-', 35));
+            foreach (Log log in exchange.logManager.LogList)
+            {
+                Console.WriteLine("{0}->{1}@{2}: {3} {4} {5} at {6:C2}", log.origin, log.dest, log.timeStamp, log.type, log.volume, log.stockCode, log.price);
+            }
+            Console.WriteLine(new string('-', 73));
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+        static void DisplayReport(Exchange exchange)
+        {
+            Console.Clear();
+            Console.WriteLine(new string('-', 27) + "EXCHANGE REPORT" + new string('-', 28));
+            Console.WriteLine("{0,-8}{1,20}{2,20}{3,20}", "Bank", "Total Credit", "Processing Fee", "Total");
+            Console.WriteLine("{0,-8}{1,20}{2,20}{3,20}", "--------", "------------", "--------------", "-------------");
+            Decimal fees = 0m;
+            foreach (Bank bank in exchange.bankManager.BankList)
+            {
+                Decimal total = 0m;
+                foreach (Stock stock in bank.stockManager.StockList)
+                {
+                    total += stock.price * stock.volume;
+                }
+                fees += total * 0.05m;
+                Console.WriteLine("{0,-8}{1,20:C2}{2,20:C2}{3,20:C2}", bank.name, total, total * 0.05m, total * 1.05m);
+            }
+            Console.WriteLine(new string('-', 70));
+            Console.WriteLine("{0:-20}{1,-20:C2}", "Total fees:", fees);
+            Console.WriteLine(new string('-', 70));
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
         }
