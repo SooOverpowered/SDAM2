@@ -103,7 +103,11 @@ namespace SDAM2
         static void MainMenu(Exchange exchange, Bank user)
         {
             const String EXIT = "0";
-            const String BUY = "1";
+            const String TRADE = "1";
+            const String ASSET = "2";
+            const String INVOICE = "3";
+            const String LOG = "4";
+            const String REPORT = "5";
             bool flag = true;
             while (flag)
             {
@@ -111,26 +115,49 @@ namespace SDAM2
                 Console.WriteLine("-----------MAIN MENU----------");
                 Console.WriteLine("1. Trade");
                 Console.WriteLine("2. Your Asset");
-                Console.WriteLine("3. Transaction Log");
-                Console.WriteLine("4. Financial Report");
+                Console.WriteLine("3. Your Invoice");
+                Console.WriteLine("4. Transaction Log");
+                Console.WriteLine("5. Financial Report");
                 Console.WriteLine("0. EXIT PROGRAM");
                 Console.WriteLine(new string('-', 30));
                 Console.Write("Please choose an option: ");
                 String choice = Console.ReadLine();
                 switch (choice)
                 {
-                    case BUY:
-                        StockExchangeMenu(exchange, user);
-                        break;
+                    case TRADE:
+                        {
+                            StockExchangeMenu(exchange, user);
+                            break;
+                        }
+                    case ASSET:
+                        {
+                            break;
+                        }
+                    case INVOICE:
+                        {
+                            break;
+                        }
+                    case LOG:
+                        {
+                            break;
+                        }
+                    case REPORT:
+                        {
+                            break;
+                        }
                     case EXIT:
-                        SaveData(exchange);
-                        flag = false;
-                        break;
+                        {
+                            SaveData(exchange);
+                            flag = false;
+                            break;
+                        }
                     default:
-                        Console.WriteLine("Please choose from the listed options");
-                        Console.WriteLine("\nPress any key to continue...");
-                        Console.ReadKey();
-                        break;
+                        {
+                            Console.WriteLine("Please choose from the listed options");
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                            break;
+                        }
                 }
             }
         }
