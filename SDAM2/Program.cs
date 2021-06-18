@@ -10,7 +10,9 @@ namespace SDAM2
     {
         static void Main()
         {
-            Console.SetWindowSize(100,50);
+            Console.SetWindowSize(100, 25);
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
             WindowManager window = new WindowManager();
             window.Initialize();
         }
