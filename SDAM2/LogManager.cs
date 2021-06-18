@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 namespace SDAM2
 {
-    class LogManager
+    public class LogManager
     {
         public List<Log> LogList { get; set; } = new List<Log>();
         public LogManager()

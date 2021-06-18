@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace SDAM2
 {
-    class StockManager
+    public class StockManager
     {
         public List<Stock> StockList { get; set; } = new List<Stock>();
         public StockManager()
