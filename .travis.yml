@@ -1,7 +1,7 @@
 language: csharp
 solution: SDAM2.sln
 mono: none
-dotnet: 3.1.16
+dotnet: 5.0
 script:
   - dotnet restore
   - dotnet --no-restore build
