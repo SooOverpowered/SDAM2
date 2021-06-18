@@ -1,7 +1,0 @@
-os: windows
-language: csharp
-solution: SDAM2.sln
-mono: none
-dotnet: 5.0.7
-script:
-  - dotnet restore
