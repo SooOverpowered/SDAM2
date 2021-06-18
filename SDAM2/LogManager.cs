@@ -5,20 +5,12 @@ namespace SDAM2
 {
     class LogManager
     {
-        public List<string> logs { get; set; } = new List<string>();
+        public List<Log> logs { get; set; } = new List<Log>();
         public LogManager()
         { }
-        public void addLog(String origin, String type, String stockCode, int volume, Decimal price, DateTime timeStamp, String bankName = "")
+        public void addLog(String origin, String dest, String type, String stockCode, int volume, Decimal price, DateTime timeStamp)
         {
-            if (bankName != "")
-            {
-                File.AppendAllText("log.txt", $"{origin}-{bankName}@{timeStamp}: {type} {volume} {stockCode} at {price}");
-            }
-            else
-            {
-                File.AppendAllText("log.txt", $"{origin}@{timeStamp}: {type} {volume} {stockCode} at {price}");
-            }
-
+            logs.Add(new Log(origin, dest, type, stockCode, volume, price, timeStamp));
         }
     }
 }
