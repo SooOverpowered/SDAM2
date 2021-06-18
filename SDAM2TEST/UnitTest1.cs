@@ -13,7 +13,6 @@ namespace SDAM2TEST
             string expected = "bank1";
             string actual = bank1.name;
             Assert.AreEqual(expected,actual);
-
         }
     }
 }
