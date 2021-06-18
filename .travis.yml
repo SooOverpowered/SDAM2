@@ -3,4 +3,4 @@ solution: SDAM2.sln
 mono: none
 dotnet: 5.0
 script:
-  - dotnet test
+  - dotnet restore
