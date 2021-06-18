@@ -2,7 +2,7 @@ using System;
 
 namespace SDAM2
 {
-    class Log
+    public class Log
     {
         public String origin { get; set; }
         public String dest { get; set; }

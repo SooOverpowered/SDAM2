@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SDAM2
 {
-    class BankManager
+    public class BankManager
     {
         public List<Bank> BankList { get; set; } = new List<Bank>();
         public BankManager()

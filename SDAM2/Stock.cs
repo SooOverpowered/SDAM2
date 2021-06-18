@@ -1,7 +1,7 @@
 using System;
 namespace SDAM2
 {
-    class Stock
+    public class Stock
     {
         public String stockCode { get; set; }
         public Decimal price { get; set; }
