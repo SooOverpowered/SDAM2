@@ -17,7 +17,6 @@ namespace SDAM2
         public List<Bank> getBank(string Name)
         {
             return new List<Bank>(from bank in BankList where bank.name == Name select bank);
-
         }
     }
 }
