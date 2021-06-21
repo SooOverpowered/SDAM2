@@ -7,8 +7,6 @@ namespace SDAM2
         public BankManager bankManager { get; set; } = new BankManager();
         public LogManager logManager {get;set;} = new LogManager();
         public Exchange()
-        {
-
-        }
+        {}
     }
 }
