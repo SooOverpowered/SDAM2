@@ -266,20 +266,20 @@ namespace SDAM2
                                 Stock avail_stock = exchange.stockManager.getStock(stockCode, user_price).First();
                                 if (user_vol == 0) //Volume 0 means a quote
                                 {
-                                    Console.WriteLine($"Quote {avail_stock.volume} {avail_stock.stockCode} at ${avail_stock.price}");
+                                    Console.WriteLine($"Quote {avail_stock.volume} {avail_stock.stockCode} at {avail_stock.price:C2}");
                                     exchange.logManager.addLog("EXCH", user.name, "quote", avail_stock.stockCode, avail_stock.volume, avail_stock.price, DateTime.Now);
                                 }
                                 else if (avail_stock.volume >= user_vol) //Banks buy successful
                                 {
                                     user.stockManager.addStock(stockCode, user_price, user_vol);
-                                    Console.WriteLine($"Bought {user_vol} {stockCode} at ${user_price}");
+                                    Console.WriteLine($"Bought {user_vol} {stockCode} at {user_price:C2}");
                                     exchange.logManager.addLog("EXCH", user.name, "bought", stockCode, user_vol, user_price, DateTime.Now);
                                     SaveData(exchange);
                                 }
                                 else //not enough stock -> quote stock with enough volume and having best price
                                 {
                                     //Send a quote
-                                    Console.WriteLine($"Only {avail_stock.volume} {stockCode} available at ${user_price}");
+                                    Console.WriteLine($"Only {avail_stock.volume} {stockCode} available at {user_price:C2}");
                                     exchange.logManager.addLog("EXCH", user.name, "only", stockCode, avail_stock.volume, user_price, DateTime.Now);
                                     List<Stock> quoted = exchange.stockManager.getStockFromVolume(stockCode, user_vol);
                                     if (quoted.Count() == 0) //not stock with that volume available
@@ -288,15 +288,15 @@ namespace SDAM2
                                     }
                                     else //stock with sufficient volume available
                                     {
-                                        Console.WriteLine($"Quote {quoted.First().volume} {quoted.First().stockCode} at ${quoted.First().price}");
+                                        Console.WriteLine($"Quote {quoted.First().volume} {quoted.First().stockCode} at {quoted.First().price:C2}");
                                         exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, quoted.First().volume, quoted.First().price, DateTime.Now);
                                     }
                                 }
                             }
                             else //Stock with user_price does not exist -> quote another price and volume
                             {
-                                Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}"); //Quote best price available
+                                Console.WriteLine($"No {stockCode} stock available at {user_price:C2}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at {stocks.First().price:C2}"); //Quote best price available
                                 exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, stocks.First().volume, stocks.First().price, DateTime.Now);
                             }
                             Console.WriteLine("\nPress any key to continue...");
@@ -309,14 +309,14 @@ namespace SDAM2
                             decimal user_price = Convert.ToDecimal(Console.ReadLine());
                             if (exchange.stockManager.getStock(stockCode, user_price).Count() == 0)
                             {
-                                Console.WriteLine($"No {stockCode} stock available at {user_price}");
-                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at ${stocks.First().price}");
+                                Console.WriteLine($"No {stockCode} stock available at {user_price:C2}");
+                                Console.WriteLine($"Quote {stocks.First().volume} {stockCode} at {stocks.First().price:C2}");
                                 exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, stocks.First().volume, stocks.First().price, DateTime.Now);
                             }
                             else
                             {
                                 Stock quoted = exchange.stockManager.getStock(stockCode, user_price).First();
-                                Console.WriteLine($"Quote {quoted.volume} {quoted.stockCode} at ${quoted.price}");
+                                Console.WriteLine($"Quote {quoted.volume} {quoted.stockCode} at {quoted.price:C2}");
                                 exchange.logManager.addLog("EXCH", user.name, "quote", stockCode, quoted.volume, quoted.price, DateTime.Now);
                             }
                             Console.WriteLine("\nPress any key to continue...");
@@ -364,7 +364,7 @@ namespace SDAM2
             foreach (Log log in logs)
             {
                 total += log.price * log.volume;
-                Console.WriteLine("{0,-20}{1,8}{2,8}{3,9}{4,14:C2}", log.timeStamp, log.stockCode, log.price, log.volume, log.price * log.volume);
+                Console.WriteLine("{0,-20}{1,8}{2,8:C2}{3,9}{4,14:C2}", log.timeStamp, log.stockCode, log.price, log.volume, log.price * log.volume);
             }
             Console.WriteLine("\n{0,-20}{1,-20:C2}", "Total (w/o fee):", total);
             Console.WriteLine("{0,-20}{1,-20:C2}", "Total (w/ fee):", total * 1.05m);
