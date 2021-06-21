@@ -12,7 +12,11 @@ namespace SDAM2TEST
             Bank bank1 = new Bank("bank1");
             string expected = "bank1";
             string actual = bank1.name;
-            Assert.AreEqual(expected,actual);
+            Assert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void TestMethod2()
+        { }
     }
 }
