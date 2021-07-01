@@ -8,6 +8,35 @@ namespace SDAM2TEST
     public class StockManagerTest
     {
         [TestMethod]
+        public void getStockTest()
+        {
+            StockManager stockmanager = new StockManager();
+            stockmanager.addStock("Code1", 1.5m, 1);
+            Stock expected = stockmanager.StockList.First();
+            Stock actual = stockmanager.getStock("Code1").First();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void getStockOverloadTest()
+        {
+            StockManager stockmanager = new StockManager();
+            stockmanager.addStock("Code1", 1.5m, 1);
+            Stock expected = stockmanager.StockList.First();
+            Stock actual = stockmanager.getStock("Code1", 1.5m).First();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void getStockFromVolumeTest()
+        {
+            StockManager stockmanager = new StockManager();
+            stockmanager.addStock("Code1", 1.5m, 1);
+            Stock expected = stockmanager.StockList.First();
+            Stock actual = stockmanager.getStockFromVolume("Code1", 1).First();
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
         public void addStockTest()
         {
             StockManager stockManager = new StockManager();
