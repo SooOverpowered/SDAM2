@@ -8,7 +8,7 @@ namespace SDAM2TEST
     public class StockTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void StockCodeTest()
         {
             Stock stock = new Stock("Code1", 1.5m, 1);
             string expected = "Code1";
@@ -17,7 +17,7 @@ namespace SDAM2TEST
         }
 
         [TestMethod]
-        public void TestMethod2()
+        public void StockPriceTest()
         {
             Stock stock = new Stock("Code1", 1.5m, 1);
             decimal expected = 1.5m;
@@ -26,7 +26,7 @@ namespace SDAM2TEST
         }
 
         [TestMethod]
-        public void TestMethod3()
+        public void StockVolumeTest()
         {
             Stock stock = new Stock("Code1", 1.5m, 1);
             int expected = 1;
