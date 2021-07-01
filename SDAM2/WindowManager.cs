@@ -257,9 +257,11 @@ namespace SDAM2
                     case BUY:
                         {
                             Console.Write("Please enter price: ");
-                            decimal user_price = Convert.ToDecimal(Console.ReadLine());
+                            decimal user_price;
+                            Decimal.TryParse(Console.ReadLine(), out user_price);
                             Console.Write("Please enter volume: ");
-                            int user_vol = Convert.ToInt32(Console.ReadLine());
+                            int user_vol;
+                            Int32.TryParse(Console.ReadLine(), out user_vol);
                             exchange.logManager.addLog(user.name, "EXCH", "buy", stockCode, user_vol, user_price, DateTime.Now);
                             if (exchange.stockManager.getStock(stockCode, user_price).Count() == 1) //Stock with user_price exist
                             {
@@ -306,7 +308,8 @@ namespace SDAM2
                     case QUOTE:
                         {
                             Console.Write("Please enter price: ");
-                            decimal user_price = Convert.ToDecimal(Console.ReadLine());
+                            decimal user_price;
+                            Decimal.TryParse(Console.ReadLine(), out user_price);
                             if (exchange.stockManager.getStock(stockCode, user_price).Count() == 0)
                             {
                                 Console.WriteLine($"No {stockCode} stock available at {user_price:C2}");
