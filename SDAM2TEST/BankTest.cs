@@ -8,7 +8,7 @@ namespace SDAM2TEST
     public class BankTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void CreateBankTest()
         {
             Bank bank1 = new Bank("bank1");
             string expected = "bank1";

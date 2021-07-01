@@ -36,6 +36,7 @@ namespace SDAM2TEST
             Stock actual = stockmanager.getStockFromVolume("Code1", 1).First();
             Assert.AreEqual(expected, actual);
         }
+
         [TestMethod]
         public void addStockTest()
         {

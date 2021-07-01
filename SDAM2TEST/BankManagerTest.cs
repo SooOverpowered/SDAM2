@@ -8,7 +8,7 @@ namespace SDAM2TEST
     public class BankManagerTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void addBankTest()
         {
             BankManager bankmanager = new BankManager();
             bankmanager.addBank("bank1");
@@ -18,7 +18,7 @@ namespace SDAM2TEST
         }
 
         [TestMethod]
-        public void TestMethod2()
+        public void getBankTest()
         {
             BankManager bankmanager = new BankManager();
             bankmanager.addBank("bank1");
