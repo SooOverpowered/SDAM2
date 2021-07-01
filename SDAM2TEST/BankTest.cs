@@ -1,10 +1,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using SDAM2;
 
 namespace SDAM2TEST
 {
     [TestClass]
-    public class UnitTest1
+    public class BankTest
     {
         [TestMethod]
         public void TestMethod1()
@@ -14,9 +15,5 @@ namespace SDAM2TEST
             string actual = bank1.name;
             Assert.AreEqual(expected, actual);
         }
-
-        [TestMethod]
-        public void TestMethod2()
-        { }
     }
 }
