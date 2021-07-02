@@ -1,4 +1,7 @@
 UML Class Diagram: https://lucid.app/lucidchart/cf242a27-3112-4ecb-975c-0c7401ad1c3f/edit?invitationId=inv_313be198-194a-47df-b872-b525d9d407b6
 Use Case Diagram: https://lucid.app/lucidchart/220e47d5-1b83-4271-9077-0de8d2bd3eb3/edit?invitationId=inv_9209a421-5d8f-46ed-a809-b874195eb01c
-Activity Diagram: https://lucid.app/lucidchart/cd7c089d-6bfb-425b-8c90-082c2c9a0524/edit?invitationId=inv_39235667-0035-4e62-816e-9e559c1d4778
+Activity Diagram 1: https://lucid.app/lucidchart/cd7c089d-6bfb-425b-8c90-082c2c9a0524/edit?invitationId=inv_39235667-0035-4e62-816e-9e559c1d4778
+Activity Diagram 2: https://lucid.app/lucidchart/f6d5f453-1219-4524-8ac7-b2311f8a979b/edit?invitationId=inv_d6ef085e-e532-4b95-8850-e7404dd48c11
+Activity Diagram 3: https://lucid.app/lucidchart/d0f950af-f9ae-4913-bb17-385bc1e13122/edit?invitationId=inv_d5c84970-10ae-483f-8fa6-f2d05b8ce7b1
 Sequence Diagram: https://lucid.app/lucidchart/8d39a700-1723-4924-9823-1323af7d9b97/edit?invitationId=inv_d35bf1aa-b6c7-45cf-82d0-39a4601e7611
+Analysis Diagram: https://lucid.app/lucidchart/dacf6084-3789-4625-9801-b0dfb44b1972/edit?invitationId=inv_3d22fd0b-96df-4b30-959d-c4b223ad8206
